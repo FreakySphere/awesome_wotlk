@@ -189,14 +189,28 @@ With love, **FreakySphere**
 
 [![Support on ReyMit](https://img.shields.io/badge/Support%20on-ReyMit-7B3FE4?style=for-the-badge&logo=heart&logoColor=white)](https://reymit.ir/FreakySphere)
 
-**USDT (TRC20)**  
-Only send USDT on the **TRON (TRC20) network**. Using a different asset or network may result in lost funds.
+**USDT · TRC20** — scan the code or copy the address below
 
-<a href="https://tronscan.org/#/address/TFoVYvxDwCvyxWmsQXxEVwLgZhPkJFwzyk"><img src="docs/images/usdt-trc20-qr.png" alt="USDT TRC20 wallet QR code for TFoVYvxDwCvyxWmsQXxEVwLgZhPkJFwzyk" width="150"></a>
-
-[Wallet address: `TFoVYvxDwCvyxWmsQXxEVwLgZhPkJFwzyk`](https://tronscan.org/#/address/TFoVYvxDwCvyxWmsQXxEVwLgZhPkJFwzyk)
+<img src="docs/images/usdt-trc20-qr.png" alt="USDT TRC20 wallet QR code" width="160">
 
 </div>
+
+**Three addresses, three networks.** Hover a block and click the copy icon. Each one accepts a single network — anything else sent to it is lost permanently.
+
+**USDT** · TRC20 — TRON network
+```text
+TFoVYvxDwCvyxWmsQXxEVwLgZhPkJFwzyk
+```
+
+**BNB** · BEP-20 — BNB Smart Chain
+```text
+0xfAcc945FB11975B17eAF82131558913574856133
+```
+
+**BTC** · native — Bitcoin
+```text
+bc1qqvl3edwwna38gh2xg9jhu9tz675g000x47mnwz
+```
 
 ---
 
