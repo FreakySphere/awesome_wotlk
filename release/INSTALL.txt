@@ -188,10 +188,10 @@ Files in this release
   Interface\AddOns\Flash\
   SHA256SUMS.txt            SHA-256 of every file above
   INSTALL.txt               this file
+  LICENSE                   GPL-3.0-or-later, the licence of this project
+  THIRD-PARTY-NOTICES.txt   licences of the libraries the mod links
 
 This archive holds only what you need to install. The documentation, the full
-source, the licence and the third-party notices stay in the repository:
+source and the issue tracker stay in the repository:
 
   https://github.com/FreakySphere/awesome_wotlk
-
-Licence: GPL-3.0-or-later. Third-party notices are listed there too.

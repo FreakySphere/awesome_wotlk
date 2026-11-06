@@ -59,8 +59,30 @@ jobs:
           Copy-Item (Join-Path $root "addons\Flash")       (Join-Path $staging "Interface\AddOns") -Recurse
 
           # install files only: the archive is for players, not for reading.
-          # Documentation, the licence and the third-party notices stay in the repository.
+          # Documentation and the source stay in the repository.
           Copy-Item (Join-Path $root "release\INSTALL.txt") $staging
+
+          # Licence texts must travel with the binaries: GPL-3.0 for the mod itself, and the
+          # MIT/BSD/FTL notices for the libraries it links. Collapsed into one file so the
+          # archive still holds nothing but install files.
+          Copy-Item (Join-Path $root "LICENSE") $staging
+          $notices = New-Object System.Collections.Generic.List[string]
+          $notices.Add("THIRD-PARTY NOTICES")
+          $notices.Add("===================")
+          $notices.Add("")
+          $notices.Add("AwesomeWotlkLib.dll links the components below. Several of their licences")
+          $notices.Add("require the copyright notice to travel with the binary, so the full texts")
+          $notices.Add("follow. The mod itself is GPL-3.0-or-later; see LICENSE.")
+          $notices.Add("")
+          foreach ($f in Get-ChildItem (Join-Path $root "licenses") -Filter *.txt | Sort-Object Name) {
+            $notices.Add(("-" * 72))
+            $notices.Add($f.BaseName)
+            $notices.Add(("-" * 72))
+            $notices.Add((Get-Content $f.FullName -Raw).TrimEnd())
+            $notices.Add("")
+          }
+          $noticeText = ($notices -join "`n").TrimEnd() + "`n"
+          [IO.File]::WriteAllText((Join-Path $staging "THIRD-PARTY-NOTICES.txt"), $noticeText, (New-Object System.Text.UTF8Encoding($false)))
 
           # checksums of everything that ships, written without a BOM so `sha256sum -c` accepts them
           $lines = Get-ChildItem $staging -Recurse -File |
