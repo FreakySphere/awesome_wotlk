@@ -186,8 +186,12 @@ Files in this release
   skia.dll                  required by AwesomeWotlkLib.dll (image encoding)
   Interface\AddOns\AwesomeCVar\
   Interface\AddOns\Flash\
-  licenses\                 third-party licences for the bundled libraries
-  SHA256SUMS.txt            checksums for the files above
+  SHA256SUMS.txt            SHA-256 of every file above
   INSTALL.txt               this file
 
-Full documentation: README.md, CHANGELOG.md, docs\api_reference.md
+This archive holds only what you need to install. The documentation, the full
+source, the licence and the third-party notices stay in the repository:
+
+  https://github.com/FreakySphere/awesome_wotlk
+
+Licence: GPL-3.0-or-later. Third-party notices are listed there too.
