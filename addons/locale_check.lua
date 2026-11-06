@@ -74,8 +74,12 @@ for _, loc in ipairs(LOCALES) do
         if ns.ResolveCategory(id) ~= id then fail("ResolveCategory(%s)", id) end
         if ns.ResolveCategory(ns.CATEGORY_NAMES[id]) ~= id then fail("ResolveCategory(localized %s)", id) end
         for _, d in ipairs(ns.CVARS[id]) do
-            if type(d.label) ~= "string" then fail("%s.label", d.name) end
-            if d.type ~= "header" and type(d.desc) ~= "string" then fail("%s.desc", d.name) end
+            -- A "status" row is painted by the UI from live client state (the pill and the banners),
+            -- so it carries no locale text at all -- unlike headers, which do have a label.
+            if d.type ~= "status" then
+                if type(d.label) ~= "string" then fail("%s.label", d.name) end
+                if d.type ~= "header" and type(d.desc) ~= "string" then fail("%s.desc", d.name) end
+            end
             if d.perf ~= nil and type(d.perf) ~= "string" then fail("%s.perf", d.name) end
             if d.requires and type(d.requires.reason) ~= "string" then fail("%s.requires.reason", d.name) end
             if not ns.IsReadOnly(d) and d.type ~= "header" and d.type ~= "description" and d.type ~= "link" and not d.perf then
