@@ -1,0 +1,84 @@
+name: CMake Windows Win32 Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows-win32-release:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Latest Release Tag
+        id: find_tag
+        uses: oprypin/find-latest-tag@v1
+        with:
+          repository: ${{ github.repository }}
+          releases-only: true
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Configure and build
+        run: |
+          $buildDir = "${{ github.workspace }}\build"
+          cmake -S "${{ github.workspace }}" -B $buildDir -G "Visual Studio 17 2022" -A Win32 -T host=x64
+          cmake --build $buildDir --config ${{ env.BUILD_TYPE }} -- /m
+
+      # The zip has to stand on its own: a player who unzips it gets the patcher, both DLLs, both
+      # addons, the install instructions, the licence and a way to verify the download.
+      - name: Package release
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name }}"
+          if (-not $tag) { $tag = "${{ steps.find_tag.outputs.tag }}" }
+
+          $root    = "${{ github.workspace }}"
+          $staging = Join-Path $root "staging"
+
+          Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path (Join-Path $staging "Interface\AddOns") | Out-Null
+
+          # binaries produced by this build
+          Copy-Item (Join-Path $root "build\bin\Release\AwesomeWotlkPatch.exe") $staging
+          Copy-Item (Join-Path $root "build\bin\Release\AwesomeWotlkLib.dll")   $staging
+          Copy-Item (Join-Path $root "deps\skia\skia.dll")                      $staging
+
+          # addons
+          Copy-Item (Join-Path $root "addons\AwesomeCVar") (Join-Path $staging "Interface\AddOns") -Recurse
+          Copy-Item (Join-Path $root "addons\Flash")       (Join-Path $staging "Interface\AddOns") -Recurse
+
+          # documentation, licence and third-party notices
+          Copy-Item (Join-Path $root "release\INSTALL.txt") $staging
+          Copy-Item (Join-Path $root "README.md")           $staging
+          Copy-Item (Join-Path $root "LICENSE")             $staging
+          Copy-Item (Join-Path $root "licenses")            (Join-Path $staging "licenses") -Recurse
+
+          # README references the support QR by a relative path, so ship the image with it
+          New-Item -ItemType Directory -Force -Path (Join-Path $staging "docs\images") | Out-Null
+          Copy-Item (Join-Path $root "docs\images\*") (Join-Path $staging "docs\images")
+
+          # checksums of everything that ships, written without a BOM so `sha256sum -c` accepts them
+          $lines = Get-ChildItem $staging -Recurse -File |
+            Where-Object { $_.Name -ne "SHA256SUMS.txt" } |
+            ForEach-Object {
+              $rel = $_.FullName.Substring($staging.Length + 1).Replace('\', '/')
+              "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $rel
+            } |
+            Sort-Object
+          [IO.File]::WriteAllLines((Join-Path $staging "SHA256SUMS.txt"), $lines, (New-Object System.Text.UTF8Encoding($false)))
+
+          Compress-Archive -Path (Join-Path $staging "*") -DestinationPath (Join-Path $root "AwesomeWotLK_$tag.zip") -Force
+
+      - name: Upload Zip to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ github.workspace }}/AwesomeWotLK_*.zip
+          tag_name: ${{ github.event.release.tag_name || steps.find_tag.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

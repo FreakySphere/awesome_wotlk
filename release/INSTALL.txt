@@ -1,0 +1,193 @@
+FreakySphere awesome_wotlk - V2  (API level 40)
+================================================
+
+A superset build of awesome_wotlk for World of Warcraft 3.3.5a (build 12340).
+Base: Noname08662 v39, plus the features that only exist in other forks.
+
+
+What this is
+------------
+A patched client exposes APIs that the stock 3.3.5a client does not have: a real
+nameplate API, distance and line-of-sight queries, vector fonts, and a nameplate
+engine with stacking, clamping and mouse-freeze.
+
+Two versions are reported to addons:
+
+    AwesomeWotlk = 40          -- API level (39 = upstream v39, 40 = this build)
+    FreakySphere = "2.0.0"     -- this build's version
+
+
+Install (3 steps)
+-----------------
+1. Copy these files into your game folder, next to Wow.exe:
+
+      AwesomeWotlkPatch.exe
+      AwesomeWotlkLib.dll
+      skia.dll
+
+2. Run AwesomeWotlkPatch.exe (double-click it). A small window opens:
+
+      [ Patch client ]   [ Remove patch ]
+
+   Click "Patch client". A clean copy of Wow.exe is saved as Wow.exe.bak
+   first, then the patch is applied, then the two DLLs are placed next to it.
+
+   The patcher also sets the Large Address Aware flag (the "4GB" tweak), so
+   4gb_patch.exe is not needed.
+
+   Note: the patcher always refreshes AwesomeWotlkLib.dll and skia.dll. Running
+   it again after updating is safe and is how you upgrade the runtime files.
+
+3. Copy the "Interface" folder from this release into your game folder, so you
+   end up with:
+
+      World of Warcraft 3.3.5a\Interface\AddOns\AwesomeCVar\
+      World of Warcraft 3.3.5a\Interface\AddOns\Flash\
+
+Start the game. Type /awesome for the settings window, /flash for the taskbar
+alerts.
+
+
+Upgrade from an older awesome_wotlk (v38, v39, or an earlier FreakySphere)
+--------------------------------------------------------------------------
+Your Wow.exe is already patched, and the patch bytes have not changed, so you
+do not have to touch it. Two ways:
+
+  a) Simplest: copy AwesomeWotlkLib.dll, skia.dll and the two addon folders
+     into the game, replacing the old ones.
+
+  b) Or just run AwesomeWotlkPatch.exe and click "Patch client" anyway. It sees
+     that Wow.exe is already patched, leaves it alone, and refreshes the two
+     DLLs next to it. It also saves Wow.exe.bak the first time, so removal
+     becomes possible later.
+
+Either way, restart the client afterwards.
+
+
+Remove the patch
+----------------
+Run AwesomeWotlkPatch.exe and click "Remove patch". Wow.exe.bak is renamed back
+over Wow.exe, so the client returns to exactly its pre-patch state - including
+the Large Address Aware flag, if it was already set.
+
+The DLLs and the addons stay in the folder; they are simply never loaded.
+
+If the client was patched by a different tool (or an older version of this one)
+there is no Wow.exe.bak. In that case click "Use a clean Wow.exe..." and point
+it at an untouched 3.3.5a client; that copy becomes the backup and "Remove
+patch" then works as usual.
+
+
+Uninstall completely
+--------------------
+1. Remove the patch (see above) so Wow.exe is stock again.
+2. Delete AwesomeWotlkLib.dll and skia.dll from the game folder.
+3. Delete Interface\AddOns\AwesomeCVar and Interface\AddOns\Flash.
+4. Optionally delete the settings: WTF\Account\<account>\SavedVariables\
+   AwesomeCVar.lua and Flash.lua.
+
+Nothing else is written outside the game folder except the MSDF font cache in
+Cache_AwesomeWotLK\Fonts\, which can be deleted at any time.
+
+
+The two addons
+--------------
+/awesome  -  AwesomeCVar  ("AwesomeWotLK CVar Manager")
+   The settings window for everything the client mod can do: camera,
+   nameplates, text to speech, interaction, logs, and a Features tab that lists
+   every API this client exposes together with whether it works.
+
+/flash  -  Flash
+   Flashes the Windows taskbar when something happens while the game is in the
+   background: combat starts, a whisper arrives, a group invite, or a ready
+   check. All five alerts are on by default.
+
+
+What the window tells you
+-------------------------
+The pill at the top right of the window, and the banner on the About and
+Features tabs, always show which client you are running:
+
+   green   FreakySphere             everything works
+   amber   another awesome_wotlk    the upstream features work (v39 settings on
+                                    a v39 client, v38 settings on a v38 client),
+                                    FreakySphere additions are locked
+   red     not patched              nothing works, every option is read-only
+
+Locked options are dimmed, cannot be clicked, and print the reason underneath.
+
+
+What is new in V2 (compared to V1)
+----------------------------------
+V1 was built on upstream v38. V2 moves to v39 and keeps everything V1 had.
+
+From v39:
+- LuaJIT (luaSwap) - the Lua VM runs 2.5-3x faster. Off by default, needs a restart.
+- World culling rewritten (worldCullMode) - doorway and terrain-horizon culling
+  is exact, and no longer reads freed memory with many doorways on screen.
+- Projected textures (projectedTextureMode) and ground-target clamp
+  (groundTargetClamp).
+- UI cooldown swipe fix (uiCooldownSwipeFix).
+- Tab-target distance, 41-200 yards (tabTargetDistance).
+- Nameplate clamp views (nameplateClampViews) - a clamped plate's unit stays
+  alive while off screen.
+- Clamp and freeze affiliations, and two extra freeze modes ("except your
+  target").
+
+Kept from V1:
+- Distance API, in yards:
+    GetDistanceForUnit(unit)
+    GetDistanceForGUID(guid)
+    GetDistanceForNamePlate(frame)
+    GetNamePlateForGUID(guid)
+    GetGUIDForNamePlate(frame)
+    C_NamePlate.GetNamePlatesDistance()
+    C_NamePlate.GetNamePlatesDistanceList()   -- sorted nearest first
+- World queries:
+    UnitInLOS(unit)            -- clear line of sight?
+    UnitPosition(unit)         -- x, y, z
+    UnitFacing(unit)           -- radians, 0..2*pi
+    AmBehind(unit)             -- are you behind your target?
+    UnitExistsGUID(guid)
+    TargetUnitByGUID(guid)
+    UnitGUIDByName(name)
+- Macro conditionals:  @focuslocation  and  @targetlocation
+    /cast [@focuslocation] Blizzard
+- enableStancePatch (on by default, /awesome -> Other -> Combat)
+    Makes /cast Battle Stance + /cast Charge work in one click.
+- NAME_PLATE_OWNER_CHANGED event
+- UnitIsSilenced dispatches on argument count, so the client's own voice-chat
+  function works again; the flag check is UnitIsFlagSilenced.
+
+
+Troubleshooting
+---------------
+"Patch client" says the file is not a 3.3.5a client
+    The patcher refuses any Wow.exe whose bytes do not match the expected
+    original. That means a different build, or another tool already changed it.
+    Use a clean 3.3.5a Wow.exe.
+
+The game starts but /awesome says "not patched"
+    AwesomeWotlkLib.dll or skia.dll is missing from the game folder. Run the
+    patcher again - it now refreshes both - or copy them in by hand.
+
+Nothing happens when I run the patcher
+    Close the game and any launcher first; Windows locks Wow.exe while it runs.
+
+The patch cannot be removed
+    There is no Wow.exe.bak. Use "Use a clean Wow.exe..." and point it at an
+    untouched 3.3.5a client.
+
+
+Files in this release
+---------------------
+  AwesomeWotlkPatch.exe     the patcher (Patch client / Remove patch)
+  AwesomeWotlkLib.dll       the mod
+  skia.dll                  required by AwesomeWotlkLib.dll (image encoding)
+  Interface\AddOns\AwesomeCVar\
+  Interface\AddOns\Flash\
+  licenses\                 third-party licences for the bundled libraries
+  SHA256SUMS.txt            checksums for the files above
+  INSTALL.txt               this file
+
+Full documentation: README.md, CHANGELOG.md, docs\api_reference.md

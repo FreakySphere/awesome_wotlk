@@ -1,0 +1,55 @@
+name: build
+
+# Runs on every push, on pull requests, and on demand from the Actions tab.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-x86:
+    name: Windows x86 (Release)
+    runs-on: windows-2022
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      # Same generator and platform the README and build.bat document, so CI tests the path a
+      # contributor actually takes rather than a private one.
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Verify outputs
+        shell: pwsh
+        run: |
+          $expected = @(
+            "build/bin/Release/AwesomeWotlkLib.dll",
+            "build/bin/Release/AwesomeWotlkPatch.exe"
+          )
+          $missing = $false
+          foreach ($path in $expected) {
+            if (-not (Test-Path $path)) {
+              Write-Host "::error file=$path::the build did not produce $path"
+              $missing = $true
+              continue
+            }
+            Write-Host ("OK  {0}  ({1:N0} bytes)" -f $path, (Get-Item $path).Length)
+          }
+          if ($missing) { exit 1 }
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: awesome-wotlk-x86
+          path: |
+            build/bin/Release/AwesomeWotlkLib.dll
+            build/bin/Release/AwesomeWotlkPatch.exe
+          if-no-files-found: error
+          retention-days: 30

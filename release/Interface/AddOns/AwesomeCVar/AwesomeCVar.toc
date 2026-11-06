@@ -1,0 +1,26 @@
+## Interface: 30300
+## Title: AwesomeWotLK CVar Manager
+## Notes: Settings window for the FreakySphere Awesome WotLK client mod
+## Author: Widget, Crum, FreakySphere
+## Version: 4.0
+## SavedVariables: AwesomeCVarDB
+
+# Locales: enUS first, it is the fallback for missing keys
+Locales\enUS.lua
+Locales\deDE.lua
+Locales\esMX.lua
+Locales\frFR.lua
+Locales\koKR.lua
+Locales\ptBR.lua
+Locales\ruRU.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+
+# Skins
+Skins\ElvUI.lua
+
+# Core
+Constants.lua
+Compat.lua
+UI.lua
+Core.lua

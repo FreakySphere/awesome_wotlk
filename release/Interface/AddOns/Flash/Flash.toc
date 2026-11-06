@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: Flash
+## Notes: Taskbar alerts for combat, whispers, invites and ready checks
+## Author: Widget, FreakySphere
+## Version: 2.0
+## SavedVariables: FlashDB
+
+Locales.lua
+core.lua

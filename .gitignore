@@ -1,0 +1,28 @@
+build
+.vs
+out
+build_*/
+
+# Build intermediates
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.iobj
+*.ipdb
+*.tlog
+CMakeUserPresets.json
+
+# IDE
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

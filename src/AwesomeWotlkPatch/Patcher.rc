@@ -1,0 +1,37 @@
+#include <windows.h>
+
+#include "resource.h"
+
+IDD_PATCHER DIALOGEX 0, 0, 300, 132
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "AwesomeWotLK Patcher"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_STATUS, 10, 10, 280, 46
+    PUSHBUTTON      "Patch client", IDC_PATCH, 10, 82, 86, 20, BS_OWNERDRAW
+    PUSHBUTTON      "Remove patch", IDC_REMOVE, 104, 82, 86, 20, BS_OWNERDRAW
+    PUSHBUTTON      "Use a clean Wow.exe...", IDC_LOCATE, 10, 104, 170, 18
+    DEFPUSHBUTTON   "Close", IDCANCEL, 236, 104, 54, 18
+END
+
+1 VERSIONINFO
+FILEVERSION     2,0,0,0
+PRODUCTVERSION  2,0,0,0
+FILEOS          0x4
+FILETYPE        0x1
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "AwesomeWotLK Patcher"
+            VALUE "FileVersion", "2.0.0"
+            VALUE "ProductName", "FreakySphere awesome_wotlk"
+            VALUE "ProductVersion", "2.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
