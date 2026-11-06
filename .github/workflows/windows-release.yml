@@ -76,7 +76,10 @@ jobs:
               "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $rel
             } |
             Sort-Object
-          [IO.File]::WriteAllLines((Join-Path $staging "SHA256SUMS.txt"), $lines, (New-Object System.Text.UTF8Encoding($false)))
+          # LF, not CRLF: WriteAllLines uses Environment.NewLine, and a trailing CR makes every
+          # entry fail `sha256sum -c` with "no such file".
+          $text = ($lines -join "`n") + "`n"
+          [IO.File]::WriteAllText((Join-Path $staging "SHA256SUMS.txt"), $text, (New-Object System.Text.UTF8Encoding($false)))
 
           Compress-Archive -Path (Join-Path $staging "*") -DestinationPath (Join-Path $root "AwesomeWotLK_$tag.zip") -Force
 
