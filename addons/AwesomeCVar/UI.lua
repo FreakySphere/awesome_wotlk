@@ -114,18 +114,6 @@ local function getValueLabel(cvarDef, value)
     return tostring(value)
 end
 
--- One backdrop definition for every card-like surface, so borders and insets cannot drift apart.
-local function setPanelBackdrop(frame, bg, border, edgeSize)
-    frame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 12, edgeSize = edgeSize or 12,
-        insets = { left = 3, right = 3, top = 3, bottom = 3 }
-    })
-    frame:SetBackdropColor(unpack(bg or {0.15, 0.15, 0.15, 0.6}))
-    frame:SetBackdropBorderColor(unpack(border or {0.4, 0.4, 0.4, 0.8}))
-end
-
 -- A small coloured capsule used for "Available" / "Locked" on the feature cards.
 local function createBadge(parent, text, color)
     local badge = CreateFrame("Frame", nil, parent)

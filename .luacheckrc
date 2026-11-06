@@ -30,7 +30,8 @@ ignore = {
 	"211/[E|L|V|P|G]",		-- Unused local variable
 	"421",					-- Shadowing definition of variable
 	"422",					-- Shadowing definition of argument
-	"432",					-- Shadowing an upvalue
+	"431",					-- Shadowing an upvalue
+	"432",					-- Shadowing an upvalue argument
 	"433",					-- Shadowing loop variable
 
 	"131/GetMinimapShape",			-- Unused implicitly defined global variable
