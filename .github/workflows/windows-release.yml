@@ -66,6 +66,12 @@ jobs:
           # MIT/BSD/FTL notices for the libraries it links. Collapsed into one file so the
           # archive still holds nothing but install files.
           Copy-Item (Join-Path $root "LICENSE") $staging
+          $kind = @{
+            asmjit = "zlib licence"; bcdec = "public domain / MIT (dual)"
+            freetype = "FreeType Licence (FTL) / GPLv2 (dual)"; luajit = "MIT licence"
+            minhook = "BSD 2-Clause"; msdfgen = "MIT licence"; skia = "BSD 3-Clause"
+            stb = "MIT / public domain (dual)"; unordered_dense = "MIT licence"
+          }
           $notices = New-Object System.Collections.Generic.List[string]
           $notices.Add("THIRD-PARTY NOTICES")
           $notices.Add("===================")
@@ -75,8 +81,9 @@ jobs:
           $notices.Add("follow. The mod itself is GPL-3.0-or-later; see LICENSE.")
           $notices.Add("")
           foreach ($f in Get-ChildItem (Join-Path $root "licenses") -Filter *.txt | Sort-Object Name) {
+            $label = if ($kind.ContainsKey($f.BaseName)) { $kind[$f.BaseName] } else { "see text" }
             $notices.Add(("-" * 72))
-            $notices.Add($f.BaseName)
+            $notices.Add(("{0}  -  {1}" -f $f.BaseName, $label))
             $notices.Add(("-" * 72))
             $notices.Add((Get-Content $f.FullName -Raw).TrimEnd())
             $notices.Add("")
